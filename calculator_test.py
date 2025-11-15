@@ -5,171 +5,176 @@ from webdriver_manager.chrome import ChromeDriverManager
 import math
 import time
 
-class CalculatorTest:
+
+class CalculatorTestV2:
     def __init__(self):
-        # Initialize Chrome WebDriver
         self.driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
         self.driver.get("file:///c:/my_drive/ip_project/index.html")
-        time.sleep(1)  # Give the page a second to load
+        time.sleep(1)  # Allow load time
 
     def click_button(self, value):
-        """Click a button based on its visible text."""
-        button = self.driver.find_element(By.XPATH, f"//button[text()='{value}']")
-        button.click()
-        time.sleep(0.3)
+        btn = self.driver.find_element(By.XPATH, f"//button[text()='{value}']")
+        btn.click()
+        time.sleep(0.2)
 
     def clear(self):
-        """Clear the calculator display."""
-        self.click_button('C')
+        self.click_button("C")
 
-    def get_display_value(self):
-        """Get the current calculator display value."""
-        display = self.driver.find_element(By.ID, "display")
-        return display.get_attribute("value")
+    def get_display(self):
+        return self.driver.find_element(By.ID, "display").get_attribute("value")
 
-    # ---- BASIC OPERATIONS ----
-    def test_addition(self):
+   
+
+    def test_basic_operations(self):
+        print("\n---- BASIC TESTS ----")
+
+        # Addition
         self.clear()
-        self.click_button('1')
-        self.click_button('+')
-        self.click_button('2')
-        self.click_button('=')
-        result = self.get_display_value()
-        assert result == '3', f"Expected 3, got {result}"
-        print("Addition test passed")
+        self.click_button("1"); self.click_button("+"); self.click_button("2"); self.click_button("=")
+        assert self.get_display() == "3"
 
-    def test_subtraction(self):
+        # Subtraction
         self.clear()
-        self.click_button('9')
-        self.click_button('-')
-        self.click_button('4')
-        self.click_button('=')
-        result = self.get_display_value()
-        assert result == '5', f"Expected 5, got {result}"
-        print("Subtraction test passed")
+        self.click_button("9"); self.click_button("-"); self.click_button("4"); self.click_button("=")
+        assert self.get_display() == "5"
 
-    def test_multiplication(self):
+        # Multiplication
         self.clear()
-        self.click_button('6')
-        self.click_button('*')
-        self.click_button('7')
-        self.click_button('=')
-        result = self.get_display_value()
-        assert result == '42', f"Expected 42, got {result}"
-        print("Multiplication test passed")
+        self.click_button("6"); self.click_button("*"); self.click_button("7"); self.click_button("=")
+        assert self.get_display() == "42"
 
-    def test_division(self):
+        # Division
         self.clear()
-        self.click_button('8')
-        self.click_button('/')
-        self.click_button('2')
-        self.click_button('=')
-        result = self.get_display_value()
-        assert result == '4', f"Expected 4, got {result}"
-        print("Division test passed")
+        self.click_button("8"); self.click_button("/"); self.click_button("2"); self.click_button("=")
+        assert self.get_display() == "4"
 
-    def test_divide_by_zero(self):
+        # Division by zero
         self.clear()
-        self.click_button('5')
-        self.click_button('/')
-        self.click_button('0')
-        self.click_button('=')
-        result = self.get_display_value()
-        assert result == 'Infinity', f"Expected Infinity, got {result}"
-        print("Divide by zero test passed")
+        self.click_button("5"); self.click_button("/"); self.click_button("0"); self.click_button("=")
+        assert self.get_display() == "Infinity"
 
-    # ---- SCIENTIFIC OPERATIONS ----
-    def test_square(self):
+        print("Basic operations passed")
+
+    # ==================================
+    # SCIENTIFIC TESTS
+    # ==================================
+
+    def test_scientific(self):
+        print("\n---- SCIENTIFIC TESTS ----")
+
+        # Square
         self.clear()
-        self.click_button('5')
-        self.click_button('x²')
-        result = self.get_display_value()
-        assert result == '25', f"Expected 25, got {result}"
-        print("Square test passed")
+        self.click_button("5"); self.click_button("x²")
+        assert self.get_display() == "25"
 
-    def test_square_root(self):
+        # Square root
         self.clear()
-        self.click_button('9')
-        self.click_button('√')
-        result = self.get_display_value()
-        assert result == '3', f"Expected 3, got {result}"
-        print("Square root test passed")
+        self.click_button("9"); self.click_button("√")
+        assert self.get_display() == "3"
 
-    def test_sin(self):
+        # Sin
         self.clear()
-        self.click_button('3')
-        self.click_button('0')
-        self.click_button('sin')
-        result = float(self.get_display_value())
-        expected = round(math.sin(math.radians(30)), 2)
-        assert abs(result - expected) < 0.01, f"Expected {expected}, got {result}"
-        print("Sine test passed")
+        self.click_button("3"); self.click_button("0"); self.click_button("sin")
+        assert abs(float(self.get_display()) - round(math.sin(math.radians(30)), 2)) < 0.01
 
-    def test_cos(self):
+        # Cos
         self.clear()
-        self.click_button('6')
-        self.click_button('0')
-        self.click_button('cos')
-        result = float(self.get_display_value())
-        expected = round(math.cos(math.radians(60)), 2)
-        assert abs(result - expected) < 0.01, f"Expected {expected}, got {result}"
-        print("Cosine test passed")
+        self.click_button("6"); self.click_button("0"); self.click_button("cos")
+        assert abs(float(self.get_display()) - round(math.cos(math.radians(60)), 2)) < 0.01
 
-    def test_tan(self):
+        # Tan
         self.clear()
-        self.click_button('4')
-        self.click_button('5')
-        self.click_button('tan')
-        result = float(self.get_display_value())
-        expected = round(math.tan(math.radians(45)), 2)
-        assert abs(result - expected) < 0.01, f"Expected {expected}, got {result}"
-        print("Tangent test passed")
+        self.click_button("4"); self.click_button("5"); self.click_button("tan")
+        assert abs(float(self.get_display()) - round(math.tan(math.radians(45)), 2)) < 0.01
 
-    def test_log(self):
+        # Log
         self.clear()
-        self.click_button('1')
-        self.click_button('0')
-        self.click_button('0')
-        self.click_button('log')
-        result = float(self.get_display_value())
-        expected = round(math.log10(100), 2)
-        assert abs(result - expected) < 0.01, f"Expected {expected}, got {result}"
-        print("Log test passed")
+        self.click_button("1"); self.click_button("0"); self.click_button("0"); self.click_button("log")
+        assert abs(float(self.get_display()) - round(math.log10(100), 2)) < 0.01
 
-    def test_ln(self):
+        # Ln
         self.clear()
-        self.click_button('2')
-        self.click_button('ln')
-        result = float(self.get_display_value())
-        expected = round(math.log(2), 2)
-        assert abs(result - expected) < 0.01, f"Expected {expected}, got {result}"
-        print("Natural log test passed")
+        self.click_button("2"); self.click_button("ln")
+        assert abs(float(self.get_display()) - round(math.log(2), 2)) < 0.01
 
-    def test_pi(self):
+        # Pi
         self.clear()
-        self.click_button('π')
-        result = float(self.get_display_value())
-        expected = round(math.pi, 2)
-        assert abs(result - expected) < 0.01, f"Expected {expected}, got {result}"
-        print("Pi constant test passed")
+        self.click_button("π")
+        self.click_button("=")
+        assert abs(float(self.get_display()) - round(math.pi, 2)) < 0.01
 
-    # ---- TEST RUNNER ----
+        print("Scientific operations passed")
+
+    # ==================================
+    # EXPRESSION TESTS (New)
+    # ==================================
+
+    def test_expressions(self):
+        print("\n---- EXPRESSION HANDLING TESTS ----")
+
+        # 2 + 3 * 4 = 14
+        self.clear()
+        for c in "2+3*4=":
+            self.click_button(c)
+        assert self.get_display() == "14"
+
+        # (5 + 3) * 2 = 16
+        self.clear()
+        for c in "(5+3)*2=":
+            self.click_button(c)
+        assert self.get_display() == "16"
+
+        # Nested: 2*(3+(4-1)) = 12
+        self.clear()
+        for c in "2*(3+(4-1))=":
+            self.click_button(c)
+        assert self.get_display() == "12"
+
+        # Mixed: 7 + (6/2) - 1 = 9
+        self.clear()
+        for c in "7+(6/2)-1=":
+            self.click_button(c)
+        assert self.get_display() == "9"
+
+        print("Expression tests passed")
+
+    # ==================================
+    # MIXED SCIENTIFIC + EXPRESSION TESTS
+    # ==================================
+
+    def test_mixed_expressions(self):
+        print("\n---- MIXED SCIENTIFIC + EXPRESSION TESTS ----")
+
+        # sin(30) + 5 ≈ 5.5
+        self.clear()
+        self.click_button("3"); self.click_button("0"); self.click_button("sin")
+        self.click_button("+"); self.click_button("5"); self.click_button("=")
+        assert abs(float(self.get_display()) - (round(math.sin(math.radians(30)), 2) + 5)) < 0.1
+
+        # √9 + 2 = 5
+        self.clear()
+        self.click_button("9"); self.click_button("√")
+        self.click_button("+"); self.click_button("2"); self.click_button("=")
+        assert self.get_display() == "5"
+
+        # 3 + π
+        self.clear()
+        self.click_button("3"); self.click_button("+"); self.click_button("π"); self.click_button("=")
+        assert abs(float(self.get_display()) - (3 + round(math.pi, 2))) < 0.01
+
+        print("Mixed expression tests passed")
+
+    # ==================================
+    # RUN ALL TESTS
+    # ==================================
+
     def run_tests(self):
         try:
-            self.test_addition()
-            self.test_subtraction()
-            self.test_multiplication()
-            self.test_division()
-            self.test_divide_by_zero()
-            self.test_square()
-            self.test_square_root()
-            self.test_sin()
-            self.test_cos()
-            self.test_tan()
-            self.test_log()
-            self.test_ln()
-            self.test_pi()
-            print("\n✅ All calculator tests passed successfully!")
+            self.test_basic_operations()
+            self.test_scientific()
+            self.test_expressions()
+            self.test_mixed_expressions()
+            print("\n✅ ALLcalcu TESTS PASSED SUCCESSFULLY!")
         except Exception as e:
             print(f"\n❌ Test failed: {e}")
         finally:
@@ -177,5 +182,5 @@ class CalculatorTest:
 
 
 if __name__ == "__main__":
-    test = CalculatorTest()
+    test = CalculatorTestV2()
     test.run_tests()
