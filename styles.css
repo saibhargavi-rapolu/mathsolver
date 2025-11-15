@@ -28,12 +28,25 @@ body {
 }
 
 .buttons {
+    display: flex;
+    gap: 20px;
+}
+
+.operators {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 10px;
 }
 
+.numbers {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    grid-template-rows: repeat(4, 1fr);
+}
+
 .btn {
+    width: 50px;
     height: 50px;
     font-size: 18px;
     border: none;
@@ -69,4 +82,12 @@ body {
 
 .clear:hover {
     background-color: #2da84f;
+}
+
+.backspace {
+    background-color: #ff3b30;
+}
+
+.backspace:hover {
+    background-color: #e6352a;
 }
