@@ -1,45 +1,122 @@
 const display = document.getElementById("display");
 
+
+function lastChar(str) {
+    if (!str) return "";
+    return str[str.length - 1];
+}
+
+
+function evalExpression(expr) {
+    if (!expr) return "";
+
+    expr = expr.replace(/π/g, `(${Math.PI})`);
+
+  
+    try {
+        const res = eval(expr);
+        return (res === undefined) ? "" : String(res);
+    } catch (e) {
+        throw e;
+    }
+}
+
+
 document.querySelectorAll("button").forEach(btn => {
     btn.addEventListener("click", () => {
         const v = btn.textContent;
+        const cur = display.value;
 
+     
         if (v === "C") {
             display.value = "";
+            return;
         }
-        else if (v === "=") {
-            try {
-                display.value = eval(display.value);
-            } catch (error) {
-                display.value = 'Error';
+
+        // BACKSPACE (delete last character)
+        if (v === "x") {
+            display.value = display.value.slice(0, -1);
+            return;
+        }
+
+        // INSTANT SCIENTIFIC OPERATIONS (operate on current display numeric value)
+        // If display is empty for these, do nothing.
+        if (v === "x²") {
+            if (cur !== "") {
+                // parse float and square
+                const n = parseFloat(cur);
+                display.value = String(Math.pow(n, 2));
             }
+            return;
         }
-        else if (v === "x²") {
-            display.value = Math.pow(display.value, 2);
+
+        if (v === "√") {
+            if (cur !== "") {
+                const n = parseFloat(cur);
+                display.value = String(Math.sqrt(n));
+            }
+            return;
         }
-        else if (v === "√") {
-            display.value = Math.sqrt(display.value);
+
+        if (v === "sin") {
+            if (cur !== "") {
+                const n = parseFloat(cur);
+                display.value = String(Math.sin(n * Math.PI / 180).toFixed(2));
+            }
+            return;
         }
-        else if (v === "π") {
-            display.value = Math.PI.toFixed(2);
+
+        if (v === "cos") {
+            if (cur !== "") {
+                const n = parseFloat(cur);
+                display.value = String(Math.cos(n * Math.PI / 180).toFixed(2));
+            }
+            return;
         }
-        else if (v === "sin") {
-            display.value = Math.sin(display.value * Math.PI/180).toFixed(2);
+
+        if (v === "tan") {
+            if (cur !== "") {
+                const n = parseFloat(cur);
+                display.value = String(Math.tan(n * Math.PI / 180).toFixed(2));
+            }
+            return;
         }
-        else if (v === "cos") {
-            display.value = Math.cos(display.value * Math.PI/180).toFixed(2);
+
+        if (v === "log") {
+            if (cur !== "") {
+                const n = parseFloat(cur);
+                display.value = String(Math.log10(n).toFixed(2));
+            }
+            return;
         }
-        else if (v === "tan") {
-            display.value = Math.tan(display.value * Math.PI/180).toFixed(2);
+
+        if (v === "ln") {
+            if (cur !== "") {
+                const n = parseFloat(cur);
+                display.value = String(Math.log(n).toFixed(2));
+            }
+            return;
         }
-        else if (v === "log") {
-            display.value = Math.log10(display.value).toFixed(2);
+
+        // PI: append the π token (so expressions like 3+π work)
+        if (v === "π") {
+            // If display currently ends with a number or ')', appending π is fine.
+            display.value += "π";
+            return;
         }
-        else if (v === "ln") {
-            display.value = Math.log(display.value).toFixed(2);
+
+        // EQUALS: evaluate the whole expression (supports parentheses and π)
+        if (v === "=") {
+            try {
+                const result = evalExpression(display.value);
+                display.value = result;
+            } catch (err) {
+                display.value = "Error";
+            }
+            return;
         }
-        else {
-            display.value += v;
-        }
+
+        // DEFAULT: append button label to display (digits, operators, parentheses)
+        display.value += v;
     });
 });
